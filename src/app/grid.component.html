@@ -1,0 +1,56 @@
+<div>
+  <h1>Herd List</h1>
+  <mat-table [dataSource]="tableData$ | async" class="mat-elevation-z8" [trackBy]="trackByColumn">
+    <ng-container
+      *ngFor="let column of headColumns; index as cindex"
+      [matColumnDef]="column.column"
+    >
+      <mat-header-cell *matHeaderCellDef>{{ column.title }}</mat-header-cell>
+      <mat-cell *matCellDef="let cow; let i = index">
+        <ng-container [ngSwitch]="column.type">
+          <ng-container *ngSwitchCase="'index'"> {{ i + 1 }}. </ng-container>
+          <ng-container *ngSwitchCase="'control'">
+            <span class="remove-icon" (click)="removeItem(cow)"
+              ><mat-icon aria-hidden="false" aria-label="remove item"
+                >close</mat-icon
+              ></span
+            >
+          </ng-container>
+          <ng-container *ngSwitchCase="'boolean'">
+            <input
+              type="checkbox"
+              (change)="changeBoolenValueFor($event, cow, column)"
+              [checked]="cow[column.column]"
+            />
+          </ng-container>
+          <ng-container *ngSwitchDefault>
+            <input
+              type="text"
+              (change)="changeValueFor($event, cow, column)"
+              style="width: 100%"
+              [value]="cow[column.column] ? cow[column.column] : ''"
+            />
+          </ng-container>
+        </ng-container>
+      </mat-cell>
+      <mat-footer-cell *matFooterCellDef>
+        <ng-container *ngIf="cindex === 0">
+          <div class="buttons-container">
+            <button (click)="addNewRow()">Add new row</button>
+            <button
+              [disabled]="!(valueChanges | async)"
+              (click)="applyChanges()"
+            >
+              Apply Changes
+            </button>
+          </div>
+        </ng-container>
+      </mat-footer-cell>
+    </ng-container>
+
+    <mat-header-row *matHeaderRowDef="flatColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: flatColumns"></mat-row>
+    <mat-footer-row *matFooterRowDef="flatColumns"></mat-footer-row>
+
+  </mat-table>
+</div>
